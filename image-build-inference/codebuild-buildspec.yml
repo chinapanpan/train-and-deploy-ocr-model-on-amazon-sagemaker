@@ -4,20 +4,20 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - BASE_IMAGE_REPOSITORY="dkr.ecr.${AWS_REGION}.amazonaws.com"
-      - aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      - BASE_IMAGE_REPOSITORY="dkr.ecr.ap-northeast-2.amazonaws.com"
+      - aws --region ap-northeast-2 ecr get-login-password | docker login --username AWS --password-stdin "096700017498.dkr.ecr.ap-northeast-2.amazonaws.com"
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG 096700017498.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
       - if [ $CODEBUILD_BUILD_SUCCEEDING = 0 ]; then exit 1; fi
       - echo Build completed on `date`
       - echo Logging in to Amazon ECR...
-      - aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY
+      - aws --region ap-northeast-2 ecr get-login-password | docker login --username AWS --password-stdin 096700017498.$BASE_IMAGE_REPOSITORY
       - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - aws --region $AWS_REGION sagemaker create-image-version --image-name $IMAGE_REPO_NAME --base-image $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push 096700017498.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - aws --region ap-northeast-2 sagemaker create-image-version --image-name $IMAGE_REPO_NAME --base-image 096700017498.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
